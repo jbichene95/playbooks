@@ -1,0 +1,46 @@
+---
+- name: install nginx
+  hosts: all
+  vars_prompt:
+    - name: repo
+      prompt: enter git repo url
+      private: false
+    
+    - name: config
+      prompt: enter default config path 
+    
+  become: yes
+
+  
+  tasks:
+  
+  
+  - name: install nginx from apt
+    ansible.builtin.apt:
+      name: nginx
+      update_cache: yes
+  
+  
+  - name: clone static app 
+    ansible.builtin.git:
+      repo: {{repo}}
+      dest: /var/www/html/static
+      single_branch: yes
+      version: master
+  
+  
+  - name: copy actual default config
+    ansible.builtin.copy:
+      src: {{config}}
+      dest: /etc/nginx/sites-enabled/default  # link to /path/to/file
+      follow: yes
+
+  # - name: Execute the command in remote shell; stdout goes to the specified file on the remote
+  #   ansible.builtin.shell: chmod 777 /home/ubuntu
+
+  
+  - name: Reload service httpd, in all cases
+    ansible.builtin.systemd:
+      name: nginx
+      state: reloaded
+  
