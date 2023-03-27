@@ -1,7 +1,8 @@
 server{
     root /var/www/html/static;
     index <entry file name>;
-    location / {
+   
+   location / {
         
     }
 }
